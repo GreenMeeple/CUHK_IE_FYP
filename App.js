@@ -1,28 +1,47 @@
-import React, { Component } from 'react';
-import {HashRouter,Route,Switch} from "react-router-dom";
+import React, { Component, useState } from 'react';
 import './App.css';
-import { Drizzle, generateStore } from "@drizzle/store";
 
-import Delegate from "./submit/Delegate";
-import GiveVote from "./submit/GiveVote";
-import InputShowVoter from "./submit/InputShowVoter";
-import Vote from "./submit/Vote";
+import Chairperson from "./electionDetails/Chairperson";	
+import Vote from "./electionDetails/Vote";
+import Votingevent from "./electionDetails/Votingevent";
+
+import Delegate from "./voteControl/Delegate";
+import GiveVote from "./voteControl/GiveVote";
+
+import InputShowVoter from "./voterDetails/InputShowVoter";
+import Voters from "./voterDetails/Voters";
+
+import ViewRank from "./voteResults/ViewRank";
+import WinningProposal from "./voteResults/WinningProposal";
 
 import Header from "./lib/header";
-import Chairperson from "./vote/Chairperson";	
-
-import ViewRank from "./vote/ViewRank";
-import Voters from "./vote/Voters";
-import Votingevent from "./vote/Votingevent";
-import WinningProposal from "./vote/WinningProposal";
-
-
-
-import MainPage from "./MainPage";
-import VotingPage from "./VotingPage";
+import Footer from "./lib/footer";
+ 
 
 class App extends Component {
-	state = { loading: true, drizzleState: null };
+	state = { loading: true, drizzleState: null, 
+			ControlVisible: false, ElectionVisible: false, VoterVisible: false, ResultVisible: false};
+
+	ShowVoteControl = () => {
+		{if(this.state.ControlVisible==false) this.setState({ControlVisible: true});
+					else this.setState({ControlVisible: false});}
+	  }
+
+	ShowElectionDetail = () => {
+		{if(this.state.ElectionVisible==false) this.setState({ElectionVisible: true});
+					else this.setState({ElectionVisible: false});}
+	}
+
+	ShowVoterDetail = () => {
+		{if(this.state.VoterVisible==false) this.setState({VoterVisible: true});
+					else this.setState({VoterVisible: false});}
+	}
+
+	ShowVoteResult = () => {
+		{if(this.state.ResultVisible==false) this.setState({ResultVisible: true});
+					else this.setState({ResultVisible: false});}
+	}
+
 
     componentDidMount() {
 		const { drizzle } = this.props;
@@ -47,57 +66,69 @@ class App extends Component {
 		return (
 			<div className="App">
 				<Header/>
-				<Chairperson
-					drizzle={this.props.drizzle}
-					drizzleState={this.state.drizzleState}
-				/>
+				
+					
 				<div class="flexbox-container">
+
 					<div>
-						<Votingevent
+						<h1 onClick={this.ShowVoteControl} className="type">Vote Control</h1> 
+							{ this.state.ControlVisible ? <div>
+								<Delegate
+								drizzle={this.props.drizzle}
+								drizzleState={this.state.drizzleState}
+								/>
+								<GiveVote
+								drizzle={this.props.drizzle}
+								drizzleState={this.state.drizzleState}
+								/></div>: <div></div>}
+		  			</div>
+
+					<div>
+						<h1 onClick={this.ShowElectionDetail} className="type">Election Details</h1> 
+							{ this.state.ElectionVisible ? <div>
+							<Vote
 							drizzle={this.props.drizzle}
 							drizzleState={this.state.drizzleState}
 							/>
-					</div><div>
-						<WinningProposal
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
-					</div><div>
-						<ViewRank
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
-					</div></div>
-					<Vote
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
+							<Votingevent
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/>
+							<Chairperson
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/></div>: <div></div>}
+					</div>
+				</div>
 
 				<div class="flexbox-container">
 					<div>
-						<h1>Vote Control</h1>
-						<Delegate
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
-						<GiveVote
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
+						<h1 onClick={this.ShowVoterDetail} className="type">Voter Details</h1> 
+							{ this.state.VoterVisible ? <div>
+							<InputShowVoter
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/>
+							<Voters
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/></div>: <div></div>}
 					</div>
+					
 					<div>
-						<h1>Voter Details</h1>
-						<InputShowVoter
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
-						<Voters
-						drizzle={this.props.drizzle}
-						drizzleState={this.state.drizzleState}
-						/>
+						<h1 onClick={this.ShowVoteResult} className="type">Voting Results</h1> 
+							{ this.state.ResultVisible ? <div>
+							<WinningProposal
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/>
+							<ViewRank
+							drizzle={this.props.drizzle}
+							drizzleState={this.state.drizzleState}
+							/></div>: <div></div>}
 					</div>
 				</div>
-				<button onClick={event =>  window.location.href='./'}>Refresh if any unexpected outcome occurs :)</button>
+				<Footer/>
 			</div>
 		);
 	}
